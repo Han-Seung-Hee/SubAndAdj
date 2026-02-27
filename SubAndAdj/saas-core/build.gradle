@@ -1,0 +1,9 @@
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}
+
+// core는 라이브러리이므로 실행 파일(bootJar)을 만들지 않습니다.
+bootJar { enabled = false }
+jar { enabled = true }

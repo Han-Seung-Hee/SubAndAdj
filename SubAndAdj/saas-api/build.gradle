@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':saas-core')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+// API는 실행 가능한 jar가 필요하므로 bootJar를 활성화합니다.
+bootJar { enabled = true }
+jar { enabled = false }

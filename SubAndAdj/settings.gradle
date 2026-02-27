@@ -1,0 +1,3 @@
+rootProject.name = 'SubAndAdj'
+include 'saas-api'
+include 'saas-core'
