@@ -1,17 +1,21 @@
 plugins {
-    id 'org.springframework.boot' version '3.4.1' apply false
+    // [학습] apply false: 루트 프로젝트에는 이 플러그인을 직접 적용하지 않겠다는 뜻입니다.
+    // 자식 모듈(subprojects)에서 이 플러그인을 사용할 수 있도록 '정의'만 해두는 단계입니다.
+    id 'org.springframework.boot' version '3.5.13' apply false
     id 'io.spring.dependency-management' version '1.1.7' apply false
+    id 'java'
     id 'idea'
 }
 
 idea {
     module {
-        downloadJavadoc = false
-        downloadSources = true
+        downloadJavadoc = false // [학습] 라이브러리의 Javadoc(설명서)까지는 안 받아도 됩니다. (속도 향상)
+        downloadSources = true  // [학습] 라이브러리의 실제 소스 코드는 공부할 때 필요하므로 다운로드합니다.
     }
 }
 
 allprojects {
+    // [학습] allprojects: 루트를 포함한 모든 모듈에 공통으로 적용되는 설정입니다.
     group = 'hsh.saas'
     version = '0.0.1-SNAPSHOT'
 
@@ -19,27 +23,49 @@ allprojects {
         mavenCentral()
     }
 
+    // [학습] apply plugin: 'idea': IntelliJ 같은 IDE 설정을 모든 모듈에 입혀줍니다.
     apply plugin: 'idea'
 }
 
 subprojects {
+    // [학습] subprojects: 루트를 제외한 하위 모듈(saas-api, saas-core)에만 적용됩니다.
+
+    // [학습] apply plugin: 'java': 기본적인 자바 컴파일 및 빌드 기능을 부여합니다.
     apply plugin: 'java'
+
+    // [학습] apply plugin: 'java-library': 모듈 간 의존성을 더 세밀하게 관리하기 위해 사용합니다. (api/implementation 구분 등)
     apply plugin: 'java-library'
+
+    // [학습] 위 plugins 블록에서 정의한 스프링 관련 도구들을 여기서 실제로 '활성화' 시킵니다.
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(25) // 마이그레이션 목표 버전: Java 25
         }
     }
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
+        // [학습] 롬복(Lombok) 설정: 모든 모듈에서 공통으로 사용하므로 여기에 적습니다.
+        // compileOnly: 컴파일 시점에만 필요 (jar에는 안 들어감)
+        // annotationProcessor: 롬복이 컴파일 단계에서 @Getter 등을 실제 코드로 변환하게 함
+        compileOnly 'org.projectlombok:lombok:1.18.44'
+        annotationProcessor 'org.projectlombok:lombok:1.18.44'
+
+        // 테스트 코드에서도 롬복을 써야 하므로 추가합니다.
+        testCompileOnly 'org.projectlombok:lombok:1.18.44'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.44'
+
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
+
+    // [학습] 하위 모듈은 기본적으로 '실행 파일(bootJar)'을 만들지 않고 '부품(jar)'으로만 취급합니다.
+    // 실행이 필요한 saas-api 모듈의 build.gradle에서만 bootJar를 다시 true로 켭니다.
+    bootJar { enabled = false }
+    jar { enabled = true }
 
     tasks.named('test') {
         useJUnitPlatform()

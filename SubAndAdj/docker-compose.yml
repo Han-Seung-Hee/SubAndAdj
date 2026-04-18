@@ -1,0 +1,37 @@
+services:
+  # PostgreSQL 설정
+  postgres:
+    image: postgres:14
+    container_name: saas-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: subAndAdj      # 스크린샷의 DB명 반영
+      POSTGRES_USER: xorhd1222    # 요청하신 ID 반영
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tmdgml12}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data # 데이터 보존용
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xorhd1222 -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # 볼륨 재사용 상황에서도 DB가 없으면 생성
+  db-init:
+    image: postgres:14
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-tmdgml12}
+    command: >
+      sh -c "psql -h postgres -U xorhd1222 -d postgres -tc \"SELECT 1 FROM pg_database WHERE datname='subAndAdj'\" | grep -q 1 || psql -h postgres -U xorhd1222 -d postgres -c 'CREATE DATABASE \"subAndAdj\";'"
+    restart: "no"
+
+  # Redis 설정 (로그 에러 해결용)
+  redis:
+    image: redis:latest
+    container_name: saas-redis
+    ports:
+      - "6380:6379"

@@ -1,10 +1,10 @@
 dependencies {
     // API 의존성 (다른 모듈에서 사용할 때 자동으로 포함됨)
-    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api('org.springframework.boot:spring-boot-starter-data-jpa')
 
     // 구현 의존성 (이 모듈 내부에서만 사용)
-    implementation 'org.postgresql:postgresql'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation('org.postgresql:postgresql')
+    implementation('org.springframework.boot:spring-boot-starter-data-redis')
 }
 
 // core는 라이브러리이므로 실행 파일(bootJar)을 만들지 않습니다.

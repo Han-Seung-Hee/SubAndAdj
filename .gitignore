@@ -3,3 +3,7 @@
 # Ignore markdown archive folder inside the project workspace
 SubAndAdj/plans/
 
+# Local runtime data and database dumps
+SubAndAdj/postgres_data/
+SubAndAdj/subAndAdj_backup.sql
+

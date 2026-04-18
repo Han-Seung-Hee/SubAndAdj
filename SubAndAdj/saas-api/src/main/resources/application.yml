@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:18080}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:subAndAdj}
+    username: ${DB_USERNAME:xorhd1222}
+    password: ${DB_PASSWORD:tmdgml12}
+    driver-class-name: org.postgresql.Driver
+
+    # [학습] HikariCP: 데이터베이스 커넥션을 미리 만들어 관리하는 '수영장' 같은 개념입니다.
+    hikari:
+      pool-name: SubAndAdj-HikariPool
+      minimum-idle: 5                    # 최소한으로 유지할 연결 수
+      maximum-pool-size: 20              # 최대 연결 제한 (너무 크면 DB에 부하가 갑니다)
+      connection-timeout: 30000          # 연결을 못 얻었을 때 기다리는 시간 (30초)
+      idle-timeout: 600000               # 안 쓰는 연결을 버리기 전 대기 시간 (10분)
+      max-lifetime: 1800000              # 하나의 연결이 생존할 수 있는 최대 시간 (30분)
+      connection-test-query: SELECT 1    # 연결이 살아있는지 확인하는 쿼리
+      auto-commit: true
+      leak-detection-threshold: 60000    # 커넥션 누수(반납 안 함) 감지 시 로그 출력
+
+  jpa:
+    hibernate:
+      ddl-auto: update                   # 엔티티 변경사항을 DB 테이블에 자동 반영
+    show-sql: true                       # SQL 콘솔 출력 (JPA 설정)
+    open-in-view: false                  # [학습] 트랜잭션 범위 밖에서 DB 연결을 유지하지 않음 (성능/보안 권장)
+    properties:
+      hibernate:
+        show_sql: true                   # SQL 콘솔 출력 (Hibernate 설정)
+        format_sql: true                 # SQL을 예쁘게 정렬해서 보여줌
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # [학습] N+1 문제 해결사: 연관된 데이터를 가져올 때 1개씩 100번 쿼리하지 않고, IN절로 100개를 한 번에 가져옵니다.
+        default_batch_fetch_size: 100
+        jdbc:
+          lob:
+            non_contextual_creation: true # PostgreSQL에서 LOB 생성 관련 불필요한 에러 로그 방지
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6380}
