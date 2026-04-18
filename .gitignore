@@ -1,0 +1,5 @@
+.aider*
+
+# Ignore markdown archive folder inside the project workspace
+SubAndAdj/plans/
+
