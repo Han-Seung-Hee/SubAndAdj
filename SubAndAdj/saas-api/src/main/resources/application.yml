@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:subAndAdj}
     username: ${DB_USERNAME:xorhd1222}
-    password: ${DB_PASSWORD:tmdgml12}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
     # [학습] HikariCP: 데이터베이스 커넥션을 미리 만들어 관리하는 '수영장' 같은 개념입니다.

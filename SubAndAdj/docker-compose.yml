@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: subAndAdj      # 스크린샷의 DB명 반영
       POSTGRES_USER: xorhd1222    # 요청하신 ID 반영
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-tmdgml12}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./postgres_data:/var/lib/postgresql/data # 데이터 보존용
     healthcheck:
@@ -24,7 +24,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      PGPASSWORD: ${DB_PASSWORD:-tmdgml12}
+      PGPASSWORD: ${DB_PASSWORD}
     command: >
       sh -c "psql -h postgres -U xorhd1222 -d postgres -tc \"SELECT 1 FROM pg_database WHERE datname='subAndAdj'\" | grep -q 1 || psql -h postgres -U xorhd1222 -d postgres -c 'CREATE DATABASE \"subAndAdj\";'"
     restart: "no"
