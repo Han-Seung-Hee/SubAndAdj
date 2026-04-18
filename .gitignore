@@ -7,3 +7,8 @@ SubAndAdj/plans/
 SubAndAdj/postgres_data/
 SubAndAdj/subAndAdj_backup.sql
 
+# Local environment secrets
+SubAndAdj/.env
+SubAndAdj/.env.*
+!SubAndAdj/.env.example
+

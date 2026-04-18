@@ -19,6 +19,8 @@ SubAndAdj is a Gradle multi-module Spring Boot service.
 
 ```bash
 cd /Users/xorhd1222/Programming/Project/SubAndAdj/SubAndAdj
+cp .env.example .env
+# Edit .env and set DB_PASSWORD
 docker compose up -d postgres redis
 ./gradlew :saas-api:bootRun
 ```
