@@ -4,7 +4,11 @@ dependencies {
 
     // 구현 의존성 (이 모듈 내부에서만 사용)
     implementation('org.postgresql:postgresql')
-    implementation('org.springframework.boot:spring-boot-starter-data-redis')
+    // Redis - Lettuce(Netty 기반) 대신 Jedis 사용 (Java 25 sun.misc.Unsafe 경고 없음)
+    implementation('org.springframework.boot:spring-boot-starter-data-redis') {
+        exclude group: 'io.lettuce', module: 'lettuce-core'
+    }
+    implementation('redis.clients:jedis')
 }
 
 // core는 라이브러리이므로 실행 파일(bootJar)을 만들지 않습니다.
