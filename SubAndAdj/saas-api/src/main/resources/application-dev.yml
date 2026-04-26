@@ -45,8 +45,8 @@ spring:
 
 app:
   jwt:
-    issuer: ${JWT_ISSUER:subandadj-local}
+    issuer: ${JWT_ISSUER:subandadj-dev}
     audience: ${JWT_AUDIENCE:subandadj-api}
     access-token-exp-seconds: ${JWT_ACCESS_EXP:1800}
-    refresh-token-exp-seconds: ${JWT_REFRESH_EXP:604800}
-    secret: ${JWT_SECRET:}
+    refresh-token-exp-seconds: ${JWT_REFRESH_EXP:1209600}
+    secret: ${JWT_SECRET:local-dev-secret-key-at-least-32-bytes}

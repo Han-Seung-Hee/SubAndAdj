@@ -42,11 +42,10 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6380}
-
 app:
   jwt:
-    issuer: ${JWT_ISSUER:subandadj-local}
-    audience: ${JWT_AUDIENCE:subandadj-api}
-    access-token-exp-seconds: ${JWT_ACCESS_EXP:1800}
-    refresh-token-exp-seconds: ${JWT_REFRESH_EXP:604800}
-    secret: ${JWT_SECRET:}
+    issuer: ${JWT_ISSUER}
+    audience: ${JWT_AUDIENCE}
+    access-token-exp-seconds: ${JWT_ACCESS_EXP:900}
+    refresh-token-exp-seconds: ${JWT_REFRESH_EXP:1209600}
+    secret: ${JWT_SECRET}
