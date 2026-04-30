@@ -82,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /*
-     * TODO(P1): /auth/**, /actuator/health 등 공개 경로는 필터 스킵(shouldNotFilter)으로 최적화.
+     * TODO(P1): /api/auth/**, /actuator/health 등 공개 경로는 필터 스킵(shouldNotFilter)으로 최적화.
      * 완료조건: 공개 경로 호출 시 불필요한 토큰 파싱이 발생하지 않는다.
      *
      * TODO(P1): 예외 유형별 로깅/메트릭(만료, 서명불일치, malformed) 분리.

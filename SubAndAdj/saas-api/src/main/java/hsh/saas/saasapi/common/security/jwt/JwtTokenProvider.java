@@ -134,11 +134,13 @@ public class JwtTokenProvider {
      *
      * @param userId 인증 주체 사용자 ID (sub)
      * @param tenantId 현재 요청 문맥의 테넌트 ID
+     * @param email access 재발급 시 재조회 없이 사용할 사용자 이메일
+     * @param roles access 재발급 시 재조회 없이 사용할 권한 목록
      * @param familyId 회전 체인을 식별하는 세션 계보 ID
      * @param jti 이번 refresh 토큰의 고유 식별자
      * @return 서명된 Refresh Token 문자열
      */
-    public String generateRefreshToken(Long userId, Long tenantId, String familyId, String jti) {
+    public String generateRefreshToken(Long userId, Long tenantId, String email, List<String> roles, String familyId, String jti) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(props.refreshTokenExpSeconds());
 
@@ -149,6 +151,8 @@ public class JwtTokenProvider {
                 .id(jti)
                 .claim(CLAIM_TYP, TOKEN_TYPE_REFRESH)
                 .claim(CLAIM_TENANT_ID, tenantId)
+                .claim(CLAIM_EMAIL, email)
+                .claim(CLAIM_ROLES, roles)
                 .claim(CLAIM_FAMILY_ID, familyId)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))

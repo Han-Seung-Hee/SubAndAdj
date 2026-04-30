@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,7 +43,7 @@ public class SecurityConfig {
      * <p>핵심 정책:
      * <ul>
      *   <li>CSRF 비활성화: 브라우저 세션 기반이 아닌 JWT 기반 API이므로 기본 비활성화</li>
-     *   <li>폼 로그인 비활성화: 커스텀 /auth API 사용</li>
+         *   <li>폼 로그인 비활성화: 커스텀 /api/auth API 사용</li>
      *   <li>Stateless 세션 정책: 서버 세션을 저장하지 않음</li>
      *   <li>JWT 필터 선배치: UsernamePasswordAuthenticationFilter 전에 토큰 인증 처리</li>
      * </ul>
@@ -50,12 +51,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception{
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
-                .formLogin(form -> form.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/actuator/health").permitAll()
+                        .requestMatchers("/api/auth/**", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/tenants").permitAll()
                         .anyRequest().authenticated()
                 )
