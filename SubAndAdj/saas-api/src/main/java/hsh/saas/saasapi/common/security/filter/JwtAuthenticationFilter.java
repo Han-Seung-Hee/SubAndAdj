@@ -29,10 +29,11 @@ import java.util.List;
  *
  * <p>실패 전략:
  * 토큰 파싱이 실패하면 컨텍스트를 비우고 다음 필터로 진행한다.
- * 이후 Security 규칙에서 인증 실패(401)로 처리된다.
+ * 보호 경로라면 이후 Security 규칙에서 인증 실패(401)로 처리된다.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    /** JWT 파싱/검증/클레임 추출을 담당하는 어댑터 컴포넌트. */
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
@@ -40,6 +41,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
 
+    /**
+     * 요청 단위로 한 번 실행되어 Bearer 토큰 인증을 시도한다.
+     *
+     * <p>성공 시 SecurityContext에 인증 객체를 세팅하고,
+     * 실패 시 컨텍스트를 비운 뒤 체인을 계속 진행한다.
+     * 공개 경로 최적화(`shouldNotFilter`)는 현재 TODO 상태다.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -72,7 +80,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var authentication = new JwtAuthenticationToken(authorities, userId, tenantId, email);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch(Exception ignored){
-                // 토큰이 위조/만료/형식오류인 경우 인증 정보를 제거하고 다음 체인으로 진행
+                // 토큰이 위조/만료/형식오류이면 인증 정보를 제거하고 익명 요청으로 처리한다.
+                // (최종 401/403 포맷은 SecurityConfig의 예외 핸들러 TODO로 확장 예정)
                 SecurityContextHolder.clearContext();
             }
         }

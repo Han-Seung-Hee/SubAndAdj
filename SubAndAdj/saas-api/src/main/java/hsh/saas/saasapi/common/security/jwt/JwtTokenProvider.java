@@ -35,6 +35,7 @@ import java.util.UUID;
  *
  * <p>즉, "토큰 자체의 암호학적 유효성"은 검증하지만,
  * "토큰 사용 이력 기반의 정책 검증"은 별도 서비스/저장소가 필요하다.
+ * replay 방지/회전 정책은 core의 RefreshTokenService가 담당한다.
  */
 @Component
 public class JwtTokenProvider {
@@ -106,6 +107,7 @@ public class JwtTokenProvider {
      * @param email 사용자 식별용 이메일
      * @param roles 인가에 사용할 권한 목록
      * @return 서명된 Access Token 문자열
+     * @implNote access token은 서버 저장소에 상태를 남기지 않는 단기 토큰이다.
      */
     public String generateAccessToken(Long userId, Long tenantId, String email, List<String> roles) {
         Instant now = Instant.now();
@@ -129,8 +131,9 @@ public class JwtTokenProvider {
     /**
      * Refresh Token을 발급한다.
      *
-     * <p>Refresh Token은 access 재발급 전용 토큰으로, 노출 면적을 줄이기 위해
-     * 권한 목록 같은 인가 데이터는 싣지 않고 식별/회전 정책 데이터만 포함한다.
+     * <p>Refresh Token은 access 재발급 전용 토큰이다.
+     * 현재 구현은 재발급 시 DB 재조회 없이 동작하기 위해 email/roles도 함께 포함한다.
+     * (향후 보안 정책에 따라 최소 클레임으로 축소 가능)
      *
      * @param userId 인증 주체 사용자 ID (sub)
      * @param tenantId 현재 요청 문맥의 테넌트 ID
@@ -139,6 +142,7 @@ public class JwtTokenProvider {
      * @param familyId 회전 체인을 식별하는 세션 계보 ID
      * @param jti 이번 refresh 토큰의 고유 식별자
      * @return 서명된 Refresh Token 문자열
+     * @implNote refresh token의 상태 추적은 DB의 RefreshTokenEntity와 함께 동작한다.
      */
     public String generateRefreshToken(Long userId, Long tenantId, String email, List<String> roles, String familyId, String jti) {
         Instant now = Instant.now();
@@ -165,6 +169,7 @@ public class JwtTokenProvider {
      *
      * <p>공통 검증(서명/만료/iss/aud) 이후 typ=access를 강제해서
      * refresh 토큰의 보호 API 오용을 차단한다.
+     * 인증 필터에서 Authorization 헤더를 처리할 때 이 경로를 사용한다.
      */
     public Claims parseAccessToken(String token) {
         Claims claims = parseSignedClaims(token);
@@ -178,6 +183,7 @@ public class JwtTokenProvider {
      *
      * <p>공통 검증(서명/만료/iss/aud) 이후 typ=refresh를 강제해서
      * access 토큰과 역할이 뒤섞이는 실수를 막는다.
+     * refresh 회전 시나리오에서만 호출하는 것을 전제로 한다.
      */
     public Claims parseRefreshToken(String token) {
         Claims claims = parseSignedClaims(token);
@@ -201,6 +207,9 @@ public class JwtTokenProvider {
      *
      * <p>이 단계에서는 typ(access/refresh) 구분을 하지 않는다.
      * 타입 검증은 parseAccessToken/parseRefreshToken에서 수행한다.
+     *
+     * @param token 파싱할 JWT 문자열
+     * @return 검증이 통과된 클레임 페이로드
      */
     public Claims parseSignedClaims(String token) {
         return Jwts.parser()

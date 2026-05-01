@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <ul>
  *   <li>세션 기반 인증을 사용하지 않는 Stateless API 서버로 동작</li>
  *   <li>JWT 필터가 모든 보호 API 요청 전에 실행되어 인증 컨텍스트를 구성</li>
- *   <li>로그인/헬스체크/초기 테넌트 등록만 공개, 그 외 API는 인증 필수</li>
+    <li>로그인/헬스체크/초기 테넌트 등록만 공개, 그 외 API는 인증 필수</li>
  * </ul>
  *
  * <p>모듈 경계:
@@ -43,9 +43,10 @@ public class SecurityConfig {
      * <p>핵심 정책:
      * <ul>
      *   <li>CSRF 비활성화: 브라우저 세션 기반이 아닌 JWT 기반 API이므로 기본 비활성화</li>
-         *   <li>폼 로그인 비활성화: 커스텀 /api/auth API 사용</li>
+     *   <li>폼 로그인 비활성화: 커스텀 /api/auth API 사용</li>
      *   <li>Stateless 세션 정책: 서버 세션을 저장하지 않음</li>
      *   <li>JWT 필터 선배치: UsernamePasswordAuthenticationFilter 전에 토큰 인증 처리</li>
+     *   <li>공개 경로 최소화: 인증/헬스/부트스트랩 경로만 permitAll</li>
      * </ul>
      */
     @Bean

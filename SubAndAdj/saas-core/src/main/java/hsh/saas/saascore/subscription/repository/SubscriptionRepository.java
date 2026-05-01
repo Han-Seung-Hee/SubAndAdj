@@ -6,15 +6,21 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Subscription 영속화 저장소.
+ *
+ * <p>Spring Data JPA 규칙 기반 메서드명을 사용해
+ * 테넌트 단위 조회를 간단히 표현한다.
+ */
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-    /*
-     * 특정 고객사의 모든 구독 정보를 찾는 쿼리 메소드
-     * Spring Data JPA 가 메소드 이름을 분석하여
-     * 'SELECT * FROM subscription WHERE tenant_id = ?'
-     * 와 같은 쿼리를 자동으로 생성합니다.
-     * @param tenantId 고객사 ID
-     * @return 해당 고객사의 구독 리스트
+    /**
+     * 특정 테넌트가 보유한 모든 구독을 조회한다.
+     *
+     * <p>메서드명 파생 쿼리로 {@code tenant_id = ?} 조건이 자동 생성된다.
+     *
+     * @param tenantId 테넌트 ID
+     * @return 해당 테넌트의 구독 목록
      */
     List<Subscription> findByTenantId(Long tenantId);
 }

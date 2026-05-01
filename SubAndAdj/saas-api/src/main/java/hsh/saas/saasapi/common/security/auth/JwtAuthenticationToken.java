@@ -13,8 +13,11 @@ import java.util.Collection;
  * 요청 처리 중 필요한 최소 식별 정보(userId, tenantId, email)만 유지한다.
  */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+    /** 인증된 사용자 식별자(sub). */
     private final Long userId;
+    /** 요청 권한 범위를 결정하는 테넌트 식별자. */
     private final Long tenantId;
+    /** 사용자 표시/감사 로그에 사용하는 이메일. */
     private final String email;
 
     /**
@@ -48,10 +51,12 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         return userId;
     }
 
+    /** @return 현재 인증 컨텍스트의 테넌트 ID */
     public Long getTenantId() {
         return tenantId;
     }
 
+    /** @return 현재 인증 컨텍스트의 사용자 이메일 */
     public String getEmail() {
         return email;
     }

@@ -56,6 +56,7 @@ public record JwtProperties (
      *
      * <p>HS256 사용 시 충분한 키 길이(최소 32바이트)를 강제해서
      * 짧은 키로 인한 보안 약화를 예방한다.
+     * 검증 실패 시 애플리케이션은 시작되지 않는다(fail-fast).
      */
     @PostConstruct
     public void validateSecretStrength() {

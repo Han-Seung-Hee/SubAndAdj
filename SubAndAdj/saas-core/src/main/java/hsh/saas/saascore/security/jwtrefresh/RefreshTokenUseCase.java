@@ -21,6 +21,7 @@ public interface RefreshTokenUseCase {
      * @param email access/refresh 클레임에 담을 사용자 이메일
      * @param roles access/refresh 클레임에 담을 권한 목록
      * @return 발급된 access/refresh 토큰 쌍
+     * @throws IllegalArgumentException 파라미터가 정책상 유효하지 않은 경우
      */
     RotatedTokens issueInitialTokens(Long userId, Long tenantId, String email, List<String> roles);
 
@@ -32,6 +33,8 @@ public interface RefreshTokenUseCase {
      *
      * @param presentedRefreshToken 클라이언트가 쿠키로 제출한 refresh 토큰
      * @return 재발급된 access/refresh 토큰 쌍
+     * @throws IllegalArgumentException 저장소에 존재하지 않는 refresh 토큰인 경우
+     * @throws IllegalStateException replay/만료 등 비정상 사용이 감지된 경우
      */
     RotatedTokens rotate(String presentedRefreshToken);
 }
