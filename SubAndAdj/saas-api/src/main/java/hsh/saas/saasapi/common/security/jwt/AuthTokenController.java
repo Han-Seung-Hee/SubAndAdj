@@ -2,7 +2,6 @@ package hsh.saas.saasapi.common.security.jwt;
 
 import hsh.saas.saascore.security.jwtrefresh.RefreshTokenUseCase;
 import hsh.saas.saascore.security.jwtrefresh.RotatedTokens;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -45,7 +44,7 @@ public class AuthTokenController {
      */
     @PostMapping("/login")
     public AccessTokenResponse login(
-            @Valid @RequestBody LoginRequest request,
+            @RequestBody LoginRequest request,
             HttpServletResponse response
     ) {
         RotatedTokens issued = refreshTokenUseCase.issueInitialTokens(
